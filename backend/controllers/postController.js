@@ -1,3 +1,4 @@
+
 const Post = require('../models/Post');
 
 // US2.1 Create Post
@@ -65,7 +66,10 @@ const deletePost = async (req, res) => {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: 'Post not found' });
 
-    if (post.author.toString() !== req.user.id) {
+    const isOwner = post.author.toString() === req.user.id;
+    const isModerator = req.user.role === 'moderator' || req.user.role === 'admin';
+
+    if (!isOwner && !isModerator) {
       return res.status(403).json({ message: 'Not authorized to delete this post' });
     }
 

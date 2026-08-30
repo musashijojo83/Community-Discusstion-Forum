@@ -1,26 +1,22 @@
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
-feature/SCRUM9_create_board
-const boardRoutes = require('./routes/boardRoutes')
-
+const boardRoutes = require('./routes/boardRoutes');
 const postRoutes = require('./routes/postRoutes');
-main
+const reportRoutes = require('./routes/reportRoutes');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
-feature/SCRUM9_create_board
 app.use('/api/boards', boardRoutes);
-
-
 app.use('/api/posts', postRoutes);
-main
+app.use('/api/reports', reportRoutes);
 
 app.get('/', (req, res) => {
   res.send('Discussion Board API is running');

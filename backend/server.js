@@ -4,12 +4,15 @@ const cors = require('cors');
 require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
+const boardRoutes = require('./routes/boardRoutes')
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/boards', boardRoutes);
+
 
 app.get('/', (req, res) => {
   res.send('Discussion Board API is running');

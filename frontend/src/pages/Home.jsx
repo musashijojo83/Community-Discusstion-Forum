@@ -4,6 +4,7 @@ import axios from '../axiosConfig';
 
 function Home() {
   const [posts, setPosts] = useState([]);
+  const [boards, setBoards] = useState([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [formError, setFormError] = useState('');
@@ -12,13 +13,23 @@ function Home() {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
 
   useEffect(() => {
-    fetchPosts();
+  fetchPosts();
+  fetchBoards();
   }, []);
 
   const fetchPosts = async () => {
     try {
       const res = await axios.get('/posts');
       setPosts(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchBoards = async () => {
+  try {
+    const res = await axios.get('/boards');
+    setBoards(res.data);
     } catch (err) {
       console.error(err);
     }
@@ -102,6 +113,21 @@ function Home() {
         <button type="submit">Post</button>
       </form>
 
+
+      <h3>Thickets you're in</h3>
+          {boards.length === 0 ? (
+            <p>No Thickets yet. Create one above!</p>
+          ) : (
+            boards.map((board) => (
+              <div key={board._id} style={{ border: '1px solid #ddd', padding: 10, marginBottom: 8 }}>
+                <strong>{board.name}</strong>
+                <p style={{ margin: '4px 0' }}>{board.description}</p>
+                <small>Moderator: {board.moderator?.nickname || 'Unknown'}</small>
+              </div>
+            ))
+          )}
+
+          
       <h3>Big Thicket</h3>
       {posts.length === 0 ? (
         <p>Sorry, no Rustles yet. Be the first to start a discussion!</p>

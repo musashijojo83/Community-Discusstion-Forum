@@ -1,25 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import axios from '../axiosConfig';
 import { theme } from '../theme';
 import memberMonster from '../pic/member-monster.png';
 import approvedBadge from '../pic/approved_1.png';
 import { SortDropdown, MoreMenu, pillButtonStyle, THICKET_COLORS, mockJoinedThickets } from './ThicketBoard';
 import ReportModal from './ReportModal';
-
-// ---- 假資料：留言（含巢狀回覆）—— 後端目前沒有 Comment model，這區塊先純 UI 展示 ----
-const mockComments = [
-  {
-    id: 'c1',
-    text: 'I agree with your point. I think the discussion board is a useful way for us to share ideas and learn from each other. It also helps us understand different perspectives on the same topic.',
-    time: '2mo ago',
-    commentCount: 5,
-    replies: [
-      { id: 'c1-r1', text: 'I agree with your perspective.', time: '2mo ago' }
-    ],
-    moreReplies: 5
-  }
-];
+import { DEMO_POSTS, mockComments } from '../demoData';
 
 function timeAgo(dateStr) {
   const diffMs = Date.now() - new Date(dateStr).getTime();
@@ -76,6 +63,7 @@ function CommentItem({ comment, level = 0, onReport }) {
 function PostDetail() {
   const { thicketName, postId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [sort, setSort] = useState('New');
@@ -83,29 +71,38 @@ function PostDetail() {
   const [reportPostId, setReportPostId] = useState(null); // 目前要回報的 post id
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const displayName = thicketName || 'Thicket_name';
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
-      setError('');
       try {
+        // 從 CreatePost 展示模式傳來的假貼文內容（讓 Make a Rustle 送出的標題/內容真的顯示出來）
+        if (location.state?.demoPost) {
+          setPost(location.state.demoPost);
+          setLoading(false);
+          return;
+        }
+
         // 後端沒有「用 id 查單一 post」的 API，先抓全部 posts 再用 postId 過濾
         const res = await axios.get('/posts');
         const matched = res.data.find((p) => p._id === postId);
-        if (!matched) {
-          setError('Post not found.');
+        if (matched) {
+          setPost(matched);
+        } else {
+          // 找不到真實貼文（例如這是側欄假 Thicket 底下的展示貼文）—— fallback 用假資料，不擋畫面
+          const demoMatch = DEMO_POSTS.find((p) => p._id === postId) || DEMO_POSTS[0];
+          setPost(demoMatch);
         }
-        setPost(matched || null);
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load post.');
+        console.error('Failed to load post, falling back to demo content:', err);
+        setPost(DEMO_POSTS[0]);
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [postId]);
+  }, [postId, location.state]);
 
   const handleSubmitComment = () => {
     // TODO: 串接留言送出 API（目前後端沒有 Comment model / API，這區塊仍是純前端假資料）
@@ -159,7 +156,6 @@ function PostDetail() {
         {/* 主內容：文章 + 留言 */}
         <div style={{ flex: 1, padding: '30px 36px', maxWidth: 920 }}>
           {loading && <p>Loading...</p>}
-          {error && <p style={{ color: theme.errorRed }}>{error}</p>}
 
           {post && (
             <>

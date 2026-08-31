@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from '../axiosConfig';
 import { theme } from '../theme';
 
 // 怪獸圖片（依照 Big Thicket 3 張 + Recommended 6 張的順序對應 home-monster1~9）
@@ -228,6 +229,7 @@ function Home() {
     try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
   })();
   const isLoggedIn = !!localStorage.getItem('token') && !!storedUser;
+  const [myThickets, setMyThickets] = useState([]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -236,6 +238,20 @@ function Home() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn || !storedUser) return;
+    const loadMyThickets = async () => {
+      try {
+        const res = await axios.get('/boards');
+        setMyThickets(res.data.filter((b) => b.moderator?._id === storedUser._id));
+      } catch (err) {
+        console.error('Failed to load your Thickets:', err);
+      }
+    };
+    loadMyThickets();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn]);
 
   const handleJoin = (postId) => {
     setJoinedMap((prev) => ({ ...prev, [postId]: !prev[postId] }));
@@ -378,6 +394,26 @@ function Home() {
               <button style={sidebarButtonStyle} onClick={handleCreateThicket}>Create a Thicket +</button>
               <button style={sidebarButtonStyle}>Big Thicket</button>
               <button style={sidebarButtonStyle}>Explore</button>
+
+              {myThickets.length > 0 && (
+                <>
+                  <p style={{ fontWeight: 700, fontSize: 13, margin: '20px 0 10px' }}>My Thickets &gt;</p>
+                  {myThickets.map((b, i) => (
+                    <div
+                      key={b._id}
+                      onClick={() => navigate(`/thickets/${b.name}`)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 10,
+                        padding: '6px 4px', fontSize: 13, fontWeight: 600, cursor: 'pointer'
+                      }}
+                    >
+                      <CommunityDot color={COMMUNITY_COLORS[i % COMMUNITY_COLORS.length]} />
+                      {b.name}
+                    </div>
+                  ))}
+                </>
+              )}
+
               <p style={{ fontWeight: 700, fontSize: 13, margin: '20px 0 10px' }}>Thicket you in &gt;</p>
             </>
           )}

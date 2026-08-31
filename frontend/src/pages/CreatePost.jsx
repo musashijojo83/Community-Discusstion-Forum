@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../axiosConfig';
 import { theme } from '../theme';
 
@@ -7,7 +7,8 @@ function CreatePost() {
   const { thicketName } = useParams();
   const navigate = useNavigate();
   const [board, setBoard] = useState(null);
-  const [boardError, setBoardError] = useState('');
+  const [isDemo, setIsDemo] = useState(false);
+  const [checkingBoard, setCheckingBoard] = useState(true);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('General');
@@ -17,16 +18,22 @@ function CreatePost() {
   // 目前後端沒有「用名字查單一 board」的 API，先抓全部 board 清單再用 name 找出對應的 _id
   useEffect(() => {
     const findBoard = async () => {
+      setCheckingBoard(true);
       try {
         const res = await axios.get('/boards');
         const matched = res.data.find((b) => b.name === thicketName);
-        if (!matched) {
-          setBoardError(`Could not find a Thicket named "${thicketName}".`);
-        } else {
+        if (matched) {
           setBoard(matched);
+          setIsDemo(false);
+        } else {
+          // 資料庫還沒有這個討論版 —— 進展示模式，讓 Make a Rustle 可以照樣測試
+          setIsDemo(true);
         }
       } catch (err) {
-        setBoardError(err.response?.data?.message || 'Failed to load Thicket.');
+        console.error('Failed to load board, falling back to demo mode:', err);
+        setIsDemo(true);
+      } finally {
+        setCheckingBoard(false);
       }
     };
     findBoard();
@@ -40,6 +47,19 @@ function CreatePost() {
       return;
     }
     setSubmitting(true);
+
+    if (isDemo) {
+      // 展示模式：不打真實 API，直接組一篇假貼文，帶著使用者剛剛打的內容跳轉到文章詳情頁
+      const demoPost = {
+        _id: `demo-${Date.now()}`,
+        title,
+        content,
+        createdAt: new Date().toISOString()
+      };
+      navigate(`/thickets/${thicketName}/posts/${demoPost._id}`, { state: { demoPost } });
+      return;
+    }
+
     try {
       const res = await axios.post('/posts', {
         title,
@@ -55,14 +75,13 @@ function CreatePost() {
     }
   };
 
-  if (boardError) {
+  if (checkingBoard) {
     return (
       <div style={{
         minHeight: '100vh', backgroundColor: theme.formBg, fontFamily: 'sans-serif',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+        display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
-        <p style={{ marginBottom: 12 }}>{boardError}</p>
-        <Link to="/" style={{ color: theme.linkPurple, fontWeight: 700 }}>Back to home</Link>
+        <p>Loading...</p>
       </div>
     );
   }
@@ -79,6 +98,7 @@ function CreatePost() {
         <h2 style={{ marginTop: 0 }}>Make a Rustle</h2>
         <p style={{ color: '#666', fontSize: 13, marginTop: -8, marginBottom: 20 }}>
           Posting in <strong>{thicketName}</strong>
+          {isDemo && <span style={{ fontStyle: 'italic' }}> (demo — not saved to the database)</span>}
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -134,7 +154,7 @@ function CreatePost() {
             </button>
             <button
               type="submit"
-              disabled={submitting || !board}
+              disabled={submitting}
               style={{
                 padding: '10px 28px', borderRadius: 20, border: 'none',
                 backgroundColor: theme.inputBg, color: '#fff', fontWeight: 700,

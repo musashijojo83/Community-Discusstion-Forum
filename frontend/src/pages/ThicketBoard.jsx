@@ -5,6 +5,7 @@ import { theme } from '../theme';
 import memberMonster from '../pic/member-monster.png';
 import approvedBadge from '../pic/approved_1.png';
 import ReportModal from './ReportModal';
+import { DEMO_BOARD_DESCRIPTION, DEMO_POSTS } from '../demoData';
 
 // ---- 假資料：討論版清單（沿用 Home 的假資料樣式，側欄「Thicket you in」還沒有真實的加入清單 API）----
 const mockJoinedThickets = ['Thicket_1', 'Thicket_2', 'Thicket_3', 'Thicket_4', 'Thicket_5'];
@@ -127,6 +128,7 @@ function ThicketBoard() {
   const [reportPostId, setReportPostId] = useState(null); // 目前要回報的 post id，null 代表彈窗關閉
   const [board, setBoard] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [isDemo, setIsDemo] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const displayName = thicketName || 'Thicket_name';
@@ -139,13 +141,19 @@ function ThicketBoard() {
         // 後端沒有「用名字查單一 board」的 API，先抓全部 board 清單找出對應的 _id
         const boardsRes = await axios.get('/boards');
         const matchedBoard = boardsRes.data.find((b) => b.name === thicketName);
-        setBoard(matchedBoard || null);
 
-        const postsRes = await axios.get('/posts');
-        const boardPosts = matchedBoard
-          ? postsRes.data.filter((p) => (p.board?._id || p.board) === matchedBoard._id)
-          : [];
-        setPosts(boardPosts);
+        if (matchedBoard) {
+          setBoard(matchedBoard);
+          setIsDemo(false);
+          const postsRes = await axios.get('/posts');
+          const boardPosts = postsRes.data.filter((p) => (p.board?._id || p.board) === matchedBoard._id);
+          setPosts(boardPosts);
+        } else {
+          // 資料庫裡還沒有這個名字的討論版 —— 掉進展示模式，讓側欄的假名字也能順暢測試
+          setBoard({ name: thicketName, description: DEMO_BOARD_DESCRIPTION });
+          setIsDemo(true);
+          setPosts(DEMO_POSTS);
+        }
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load Thicket.');
       } finally {
@@ -225,12 +233,13 @@ function ThicketBoard() {
               {board?.description || 'This discussion board is a place for students to share ideas, ask questions, and discuss topics related to the course.'}
             </p>
 
-            {error && <p style={{ color: theme.errorRed }}>{error}</p>}
-            {!loading && !board && !error && (
-              <p style={{ color: theme.errorRed }}>
-                Could not find a Thicket named "{displayName}".
+            {isDemo && (
+              <p style={{ fontSize: 12, color: '#8a8a6a', fontStyle: 'italic' }}>
+                Demo preview — "{displayName}" hasn't been created yet, showing sample content.
               </p>
             )}
+
+            {error && <p style={{ color: theme.errorRed }}>{error}</p>}
 
             <div style={{ marginTop: 16, marginBottom: 12 }}>
               <SortDropdown value={sort} onChange={setSort} />

@@ -31,7 +31,7 @@ const reportPost = async (req, res) => {
   }
 };
 
-// US5.1 Get pending reports (Moderator view)
+// US5.1 Get pending reports (Moderator model)
 const getReports = async (req, res) => {
   try {
     if (req.user.role !== 'moderator' && req.user.role !== 'admin') {

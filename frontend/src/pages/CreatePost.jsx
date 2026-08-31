@@ -15,7 +15,7 @@ function CreatePost() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // 目前後端沒有「用名字查單一 board」的 API，先抓全部 board 清單再用 name 找出對應的 _id
+  // For now backend it's not time to create backend resource to check API, use get all board then use name to find
   useEffect(() => {
     const findBoard = async () => {
       setCheckingBoard(true);
@@ -26,7 +26,7 @@ function CreatePost() {
           setBoard(matched);
           setIsDemo(false);
         } else {
-          // 資料庫還沒有這個討論版 —— 進展示模式，讓 Make a Rustle 可以照樣測試
+          // For demo board
           setIsDemo(true);
         }
       } catch (err) {
@@ -49,7 +49,7 @@ function CreatePost() {
     setSubmitting(true);
 
     if (isDemo) {
-      // 展示模式：不打真實 API，直接組一篇假貼文，帶著使用者剛剛打的內容跳轉到文章詳情頁
+      // For demostration use
       const demoPost = {
         _id: `demo-${Date.now()}`,
         title,

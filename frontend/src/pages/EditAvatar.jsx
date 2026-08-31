@@ -66,7 +66,7 @@ function EditAvatar() {
           Reroll until you find the one that's you.
         </p>
 
-        {/* 預覽 */}
+        {/* FOR REVIEW AND AVATAR REROLL DICE*/}
         <div style={{
           width: 200, height: 200, margin: '0 auto 24px',
           borderRadius: 24, backgroundColor: theme.panelBg, overflow: 'hidden',

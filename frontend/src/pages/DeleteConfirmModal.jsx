@@ -2,12 +2,7 @@ import { useState } from 'react';
 import { theme } from '../theme';
 import reportMonster from '../pic/report-monster.png';
 
-/**
- * 疊加式刪除確認彈窗
- * props:
- *  - onConfirm: () => Promise<void> | void   // 按下 Delete 後執行的刪除動作
- *  - onClose: () => void                     // Cancel 或刪除完成後 Close 都呼叫這個
- */
+// For confirm winodw
 function DeleteConfirmModal({ onConfirm, onClose }) {
   const [deleted, setDeleted] = useState(false);
 

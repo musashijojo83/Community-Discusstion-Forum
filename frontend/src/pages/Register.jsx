@@ -59,7 +59,7 @@ function Register() {
       setShowSuccess(true);
     } catch (err) {
       if (!err.response) {
-        // 沒有 response = 請求根本沒送到後端（網路斷線、CORS、路徑錯、後端沒開）
+        // Set (If no respone then maybe connection issue)
         setError('Could not reach the server. Please check your connection and try again.');
         console.error('Register request failed with no response:', err);
         return;
@@ -91,7 +91,7 @@ function Register() {
         overflow: 'hidden',
         boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
       }}>
-        {/* 左側：表單區 */}
+        {/* For left side fuction list */}
         <div style={{ backgroundColor: theme.formBg, padding: '36px 40px', flex: 1.1 }}>
           <h2 style={{ marginTop: 0, marginBottom: 20, fontWeight: 800 }}>Registration Form</h2>
 
@@ -174,7 +174,7 @@ function Register() {
           </form>
         </div>
 
-        {/* 右側：插畫區 — 佔一半寬度，怪獸圖佔此區塊一半大小 */}
+        {/* Right side monster position */}
         <div style={{
           backgroundColor: theme.panelBg,
           flex: 0.9,
@@ -202,7 +202,7 @@ function Register() {
         </div>
       </div>
 
-      {/* Success 彈窗 */}
+      {/* Success window */}
       {showSuccess && (
         <div style={{
           position: 'fixed',

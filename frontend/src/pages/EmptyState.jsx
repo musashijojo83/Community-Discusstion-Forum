@@ -1,12 +1,7 @@
 import { theme } from '../theme';
 import noticeMonster from '../pic/notice-monster.png';
 
-/**
- * 搜尋結果找不到內容時顯示的提示區塊（非全螢幕遮罩，是內嵌在內容區的卡片）
- * props:
- *  - variant: 'posts' | 'thickets'
- *  - onAction: () => void   // 按下 Make a Rustle / Create a Thicket + 要做的事
- */
+// For can not find the rustles and thickets
 function EmptyState({ variant, onAction }) {
   const isPosts = variant === 'posts';
   const message = isPosts

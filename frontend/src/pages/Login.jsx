@@ -18,7 +18,7 @@ function Login() {
       const res = await axios.post('/auth/login', { email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
-      // 還沒選過怪獸頭像（avatar 是空的）代表這是第一次登入，先帶去選怪獸
+      // For first time register, and login will redirect to create avatar
       if (!res.data.user.avatar) {
         navigate('/edit-avatar');
       } else {
@@ -188,7 +188,7 @@ function Login() {
         </p>
       </div>
 
-      {/* Bottom floor with monsters — 正常文件流，用 marginTop:auto 推到畫面底部 */}
+      {/* Bottom floor with monsters */}
       <div style={{
         width: '100%',
         marginTop: 'auto',

@@ -5,12 +5,7 @@ import successMonster from '../pic/success-monster.png';
 
 const REASONS = ['Spam', 'Harassment', 'Other'];
 
-/**
- * 疊加式 Report 彈窗
- * props:
- *  - postId: string        // 後端 Report model 只跟 Post 綁定（無留言回報功能），回報留言時也先傳該留言所屬的 postId
- *  - onClose: () => void
- */
+
 function ReportModal({ postId, onClose }) {
   const [reason, setReason] = useState('');
   const [error, setError] = useState('');
@@ -45,10 +40,10 @@ function ReportModal({ postId, onClose }) {
         fontFamily: 'sans-serif'
       }}
     >
-      {/* 阻止點擊卡片內部時關閉彈窗 */}
+      {/* Prevent click the wrong content to close window */}
       <div onClick={(e) => e.stopPropagation()}>
         {!submitted ? (
-          // ---- Report 表單 ----
+          // Report form
           <div style={{
             backgroundColor: theme.formBg,
             borderRadius: 16,
@@ -112,7 +107,7 @@ function ReportModal({ postId, onClose }) {
             </div>
           </div>
         ) : (
-          // ---- Success 畫面 ----
+          // Success window
           <div style={{
             backgroundColor: theme.formBg,
             borderRadius: 16,

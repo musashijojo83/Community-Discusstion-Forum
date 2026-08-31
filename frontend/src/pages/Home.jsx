@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from '../axiosConfig';
 import { theme } from '../theme';
 
-// 怪獸圖片（依照 Big Thicket 3 張 + Recommended 6 張的順序對應 home-monster1~9）
+// Monster png for demo
 import monster1 from '../pic/home-monster1.png';
 import monster2 from '../pic/home-monster2.png';
 import monster3 from '../pic/home-monster3.png';
@@ -19,7 +19,7 @@ import bushImg from '../pic/bush.png';
 
 const MONSTERS = [monster1, monster2, monster3, monster4, monster5, monster6, monster7, monster8, monster9];
 
-// ---- 假資料：現有加入 / 熱門討論區 ----
+// Demo popular thickets
 const COMMUNITY_COLORS = ['#4FC3B0', '#F58EA6', '#5BC0DE', '#E24C4C', '#F0A868'];
 const mockCommunities = ['Thicket_1', 'Thicket_2', 'Thicket_3', 'Thicket_4', 'Thicket_5'].map((name, i) => ({
   name,
@@ -27,7 +27,7 @@ const mockCommunities = ['Thicket_1', 'Thicket_2', 'Thicket_3', 'Thicket_4', 'Th
   hasNotice: i < 4
 }));
 
-// ---- 假資料：Big Thicket（6 篇，輪播每次顯示 3 篇）----
+// Big thickets recomended
 const bigThicketPosts = Array.from({ length: 6 }).map((_, i) => ({
   id: `bt-${i}`,
   name: `Thicket_${(i % 5) + 1}`,
@@ -35,7 +35,7 @@ const bigThicketPosts = Array.from({ length: 6 }).map((_, i) => ({
   monster: MONSTERS[i % MONSTERS.length]
 }));
 
-// ---- 假資料：Recommended for you（固定 6 篇）----
+// Recommended thicket area (depend on user interest)
 const recommendedPosts = Array.from({ length: 6 }).map((_, i) => ({
   id: `rec-${i}`,
   name: `Thicket_${(i % 5) + 1}`,
@@ -43,7 +43,7 @@ const recommendedPosts = Array.from({ length: 6 }).map((_, i) => ({
   monster: MONSTERS[(i + 3) % MONSTERS.length]
 }));
 
-// ---- Post Card ----
+// Post card
 function PostCard({ post, joined, onJoin }) {
   const navigate = useNavigate();
   return (
@@ -54,7 +54,7 @@ function PostCard({ post, joined, onJoin }) {
       position: 'relative',
       minWidth: 0
     }}>
-      {/* 頂部半透明資訊列 */}
+      {/* Style for background */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -68,7 +68,7 @@ function PostCard({ post, joined, onJoin }) {
         >
           {post.name} <span style={{ fontWeight: 400, opacity: 0.85 }}>· {post.time}</span>
         </span>
-        {/* 管理員小怪獸頭像（暫用純色圓形佔位） */}
+        {/* Moderator monster icon*/}
         <div style={{
           width: 26,
           height: 26,
@@ -78,7 +78,7 @@ function PostCard({ post, joined, onJoin }) {
         }} />
       </div>
 
-      {/* 內容區：怪獸 + 草叢 + 地板 */}
+      {/* Content area monster*/}
       <div style={{ position: 'relative', height: 130 }}>
         <img
           src={post.monster}
@@ -95,7 +95,7 @@ function PostCard({ post, joined, onJoin }) {
           onError={(e) => { e.currentTarget.style.outline = '2px dashed red'; }}
         />
 
-        {/* 草叢 —— 蓋住怪獸下半部，最底部貼齊下方地板的頂端 */}
+        {/* Bush png cover*/}
         <img
           src={bushImg}
           alt=""
@@ -109,7 +109,7 @@ function PostCard({ post, joined, onJoin }) {
           }}
         />
 
-        {/* 地板 */}
+        {/* floor set */}
         <div style={{
           position: 'absolute',
           bottom: 0,
@@ -119,7 +119,7 @@ function PostCard({ post, joined, onJoin }) {
           backgroundColor: theme.floor
         }} />
 
-        {/* Join 按鈕 */}
+        {/* Join button */}
         <button
           onClick={() => onJoin(post.id)}
           style={{
@@ -143,9 +143,9 @@ function PostCard({ post, joined, onJoin }) {
   );
 }
 
-// ---- Big Thicket 輪播（6 篇，每次顯示 3 篇，自動向左滑動）----
+// Big thicket carousel function
 function BigThicketCarousel({ posts, joinedMap, onJoin }) {
-  const [page, setPage] = useState(0); // 0 = 前3篇, 1 = 後3篇
+  const [page, setPage] = useState(0); // 0 == the first 3, 1 second 3
   const totalPages = Math.ceil(posts.length / 3);
 
   useEffect(() => {
@@ -185,7 +185,7 @@ function BigThicketCarousel({ posts, joinedMap, onJoin }) {
   );
 }
 
-// ---- 左側社群小圓圈 ----
+// Demo use community icon
 function CommunityDot({ color }) {
   return (
     <div style={{
@@ -223,7 +223,7 @@ function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
-  // 登入狀態：沿用 Login.jsx 存 localStorage 的方式
+  // Login status
   const storedUser = (() => {
     try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
   })();
@@ -249,7 +249,7 @@ function Home() {
       }
     };
     loadMyThickets();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [isLoggedIn]);
 
   const handleJoin = (postId) => {
@@ -270,7 +270,7 @@ function Home() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: theme.formBg, fontFamily: 'sans-serif' }}>
-      {/* ---------- Nav Bar ---------- */}
+      {/* Navr bar */}
       <div style={{
         backgroundColor: theme.panelBg,
         padding: '16px 30px',
@@ -372,9 +372,9 @@ function Home() {
         )}
       </div>
 
-      {/* ---------- 主體：側欄 + 內容 ---------- */}
+      {/* Left side content */}
       <div style={{ display: 'flex' }}>
-        {/* 左側功能列 */}
+        {/* Left side funciton */}
         <div style={{
           width: 240,
           backgroundColor: theme.panelBg,
@@ -445,7 +445,7 @@ function Home() {
           )}
         </div>
 
-        {/* 內容區 */}
+        {/* For content */}
         <div style={{ flex: 1, padding: '30px 36px', backgroundColor: theme.formBg }}>
           <h2 style={{ marginTop: 0, marginBottom: 16 }}>Big Thicket</h2>
           <BigThicketCarousel posts={bigThicketPosts} joinedMap={joinedMap} onJoin={handleJoin} />

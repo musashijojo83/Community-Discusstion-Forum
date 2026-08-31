@@ -52,7 +52,7 @@ function CreateBoard() {
       padding: 20
     }}>
       {!success ? (
-        // ---- Create a Thicket 表單 ----
+        // Create a Thicket Form to user
         <div style={{
           backgroundColor: '#fff',
           borderRadius: 16,
@@ -154,7 +154,7 @@ function CreateBoard() {
           </form>
         </div>
       ) : (
-        // ---- Success 畫面 ----
+        // Success window notice
         <div style={{
           backgroundColor: theme.formBg,
           borderRadius: 16,

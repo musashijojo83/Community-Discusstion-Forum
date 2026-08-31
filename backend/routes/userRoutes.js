@@ -1,3 +1,4 @@
+// User route setting
 const express = require('express');
 const router = express.Router();
 const { updateAvatar } = require('../controllers/userController');

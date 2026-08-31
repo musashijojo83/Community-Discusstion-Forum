@@ -7,11 +7,11 @@ import approvedBadge from '../pic/approved_1.png';
 import ReportModal from './ReportModal';
 import { DEMO_BOARD_DESCRIPTION, DEMO_POSTS } from '../demoData';
 
-// ---- 假資料：討論版清單（沿用 Home 的假資料樣式，側欄「Thicket you in」還沒有真實的加入清單 API）----
+// For demo thicket name
 const mockJoinedThickets = ['Thicket_1', 'Thicket_2', 'Thicket_3', 'Thicket_4', 'Thicket_5'];
 const THICKET_COLORS = ['#4FC3B0', '#F58EA6', '#5BC0DE', '#E24C4C', '#F0A868'];
 
-// ---- 貼文時間顯示：轉成「Nmo/d/h ago」這種簡短格式 ----
+// Post time style "Nmo/d/h ago"
 function timeAgo(dateStr) {
   const diffMs = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diffMs / 60000);
@@ -26,7 +26,7 @@ function timeAgo(dateStr) {
 
 const SORT_OPTIONS = ['New', 'Best', 'Rating', 'Top'];
 
-// ---- 排序下拉選單（共用元件，Post 列表 / 留言都會用到）----
+
 function SortDropdown({ value, onChange }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -71,7 +71,7 @@ function SortDropdown({ value, onChange }) {
   );
 }
 
-// ---- "..." more 選單：Report / Mute（Report 目前先呼叫 onReport 佔位，之後接 Report 彈窗）----
+
 function MoreMenu({ onReport }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -128,7 +128,7 @@ function ThicketBoard() {
   })();
   const [joined, setJoined] = useState(false);
   const [sort, setSort] = useState('New');
-  const [reportPostId, setReportPostId] = useState(null); // 目前要回報的 post id，null 代表彈窗關閉
+  const [reportPostId, setReportPostId] = useState(null); 
   const [board, setBoard] = useState(null);
   const [posts, setPosts] = useState([]);
   const [isDemo, setIsDemo] = useState(false);
@@ -141,7 +141,7 @@ function ThicketBoard() {
       setLoading(true);
       setError('');
       try {
-        // 後端沒有「用名字查單一 board」的 API，先抓全部 board 清單找出對應的 _id
+        
         const boardsRes = await axios.get('/boards');
         const matchedBoard = boardsRes.data.find((b) => b.name === thicketName);
 
@@ -152,7 +152,7 @@ function ThicketBoard() {
           const boardPosts = postsRes.data.filter((p) => (p.board?._id || p.board) === matchedBoard._id);
           setPosts(boardPosts);
         } else {
-          // 資料庫裡還沒有這個名字的討論版 —— 掉進展示模式，讓側欄的假名字也能順暢測試
+          
           setBoard({ name: thicketName, description: DEMO_BOARD_DESCRIPTION });
           setIsDemo(true);
           setPosts(DEMO_POSTS);
@@ -194,7 +194,7 @@ function ThicketBoard() {
       </div>
 
       <div style={{ display: 'flex' }}>
-        {/* 左側功能列 */}
+        {/* Left side fuciton list */}
         <div style={{ width: 240, backgroundColor: theme.panelBg, padding: 20, minHeight: 'calc(100vh - 76px)', boxSizing: 'border-box' }}>
           <button style={{ ...pillButtonStyle, width: '100%', textAlign: 'left', display: 'block', marginBottom: 10 }}>Notifications</button>
           <button style={{ ...pillButtonStyle, width: '100%', textAlign: 'left', display: 'block', marginBottom: 10 }}>Create a Thicket +</button>
@@ -209,13 +209,13 @@ function ThicketBoard() {
           ))}
         </div>
 
-        {/* 主內容 */}
+        {/* Main content area */}
         <div style={{ flex: 1 }}>
-          {/* 可自訂背景 banner（預設咖啡色） */}
+          {/* Banner com. */}
           <div style={{ height: 140, backgroundColor: theme.boardHeader }} />
 
           <div style={{ padding: '0 36px 36px' }}>
-            {/* 討論版資訊列 */}
+            {/* Board info. */}
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: -50 }}>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 18 }}>
                 <div style={{
@@ -258,7 +258,7 @@ function ThicketBoard() {
               <p style={{ color: '#666' }}>No Rustles here yet. Be the first to start a discussion!</p>
             )}
 
-            {/* Post 列表 */}
+            {/* Post list */}
             {posts.map((post) => (
               <div key={post._id} style={{
                 backgroundColor: '#C9CE84', borderRadius: 14, padding: 20, marginBottom: 20

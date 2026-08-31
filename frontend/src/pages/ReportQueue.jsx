@@ -29,7 +29,7 @@ function ReportQueue() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState('New');
-  const [pendingDelete, setPendingDelete] = useState(null); // { postId, reportId } | null
+  const [pendingDelete, setPendingDelete] = useState(null); 
 
   const user = (() => {
     try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
@@ -38,14 +38,14 @@ function ReportQueue() {
 
   useEffect(() => {
     if (isAuthorized) fetchReports();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, []);
 
   const fetchReports = async () => {
     setLoading(true);
     try {
       const res = await axios.get('/reports');
-      // post 已被刪掉的話 populate 會回傳 null，這種資料就不用再顯示在待審清單
+      // post delete, then return null
       setReports(res.data.filter((r) => r.post));
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load reports');
@@ -60,11 +60,11 @@ function ReportQueue() {
       setReports((prev) => prev.filter((r) => r._id !== pendingDelete.reportId));
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete post');
-      throw err; // 讓 DeleteConfirmModal 不要顯示「已刪除」畫面
+      throw err; // DeleteConfirmModal do not show is deleted window
     }
   };
 
-  // ---- 沒有權限：擋下畫面 ----
+  // No authorized granted
   if (!isAuthorized) {
     return (
       <div style={{
@@ -103,7 +103,7 @@ function ReportQueue() {
       </div>
 
       <div style={{ display: 'flex' }}>
-        {/* 左側功能列 */}
+        {/* Left side function list */}
         <div style={{ width: 240, backgroundColor: theme.panelBg, padding: 20, minHeight: 'calc(100vh - 76px)', boxSizing: 'border-box' }}>
           <button style={sidebarButtonStyle}>Notifications</button>
           <button style={sidebarButtonStyle}>Create a Thicket +</button>
@@ -120,7 +120,7 @@ function ReportQueue() {
           ))}
         </div>
 
-        {/* 主內容：Report Queue */}
+        {/* Report Queue */}
         <div style={{ flex: 1, padding: '30px 36px' }}>
           <h2 style={{ marginTop: 0, marginBottom: 6 }}>Moderator model - Report Context</h2>
           <div style={{ marginBottom: 18 }}>

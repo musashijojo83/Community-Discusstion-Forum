@@ -71,7 +71,7 @@ function PostDetail() {
   const [replyText, setReplyText] = useState('');
   const [sort, setSort] = useState('New');
   const [searchTerm, setSearchTerm] = useState('');
-  const [reportPostId, setReportPostId] = useState(null); // 目前要回報的 post id
+  const [reportPostId, setReportPostId] = useState(null); // currently report post id
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState(mockComments);
@@ -82,20 +82,20 @@ function PostDetail() {
     const load = async () => {
       setLoading(true);
       try {
-        // 從 CreatePost 展示模式傳來的假貼文內容（讓 Make a Rustle 送出的標題/內容真的顯示出來）
+        // Demo CreatePost to display rustle fuction
         if (location.state?.demoPost) {
           setPost(location.state.demoPost);
           setLoading(false);
           return;
         }
 
-        // 後端沒有「用 id 查單一 post」的 API，先抓全部 posts 再用 postId 過濾
+        // Get all posts then use post id to filter
         const res = await axios.get('/posts');
         const matched = res.data.find((p) => p._id === postId);
         if (matched) {
           setPost(matched);
         } else {
-          // 找不到真實貼文（例如這是側欄假 Thicket 底下的展示貼文）—— fallback 用假資料，不擋畫面
+          // If can not find post, redirect to demo content for demo use
           const demoMatch = DEMO_POSTS.find((p) => p._id === postId) || DEMO_POSTS[0];
           setPost(demoMatch);
         }
@@ -110,7 +110,7 @@ function PostDetail() {
   }, [postId, location.state]);
 
   const handleSubmitComment = () => {
-    // TODO: 後端目前沒有 Comment model / API，這裡先把留言加進前端畫面上的列表，讓送出後看得到真的效果
+    // Demo reply comment 
     if (!replyText.trim()) return;
     const newComment = {
       id: `local-${Date.now()}`,
@@ -125,9 +125,6 @@ function PostDetail() {
     setReplyOpen(false);
   };
 
-  // 後端 Report 只能綁定 Post，沒有留言目標欄位，所以不管是點文章還是點留言的 Report，
-  // 一律回報「這篇貼文」。之後如果後端加了 Comment model 跟留言回報功能，
-  // 這裡要換成傳留言自己的 id。
   const handleReport = () => {
     setReportPostId(postId);
   };
@@ -158,7 +155,7 @@ function PostDetail() {
       </div>
 
       <div style={{ display: 'flex' }}>
-        {/* 左側功能列 */}
+        {/* Display left fuction list */}
         <div style={{ width: 240, backgroundColor: theme.panelBg, padding: 20, minHeight: 'calc(100vh - 76px)', boxSizing: 'border-box' }}>
           <button style={{ ...pillButtonStyle, width: '100%', textAlign: 'left', display: 'block', marginBottom: 10 }}>Notifications</button>
           <button style={{ ...pillButtonStyle, width: '100%', textAlign: 'left', display: 'block', marginBottom: 10 }}>Create a Thicket +</button>
@@ -173,13 +170,13 @@ function PostDetail() {
           ))}
         </div>
 
-        {/* 主內容：文章 + 留言 */}
+        {/* Main content and post and comment */}
         <div style={{ flex: 1, padding: '30px 36px', maxWidth: 920 }}>
           {loading && <p>Loading...</p>}
 
           {post && (
             <>
-              {/* 文章本體 */}
+              {/* Post - Rustle */}
               <div style={{ display: 'flex', gap: 12 }}>
                 <button
                   onClick={() => navigate(`/thickets/${displayName}`)}
@@ -205,7 +202,7 @@ function PostDetail() {
                 </div>
               </div>
 
-          {/* 回覆輸入框（可收合展開） */}
+          {/* Demo enter reply */}
           {replyOpen ? (
             <div style={{
               marginTop: 20, border: '1px solid #ddd', borderRadius: 12, padding: 16, backgroundColor: theme.formBg
@@ -259,7 +256,7 @@ function PostDetail() {
             </button>
           )}
 
-          {/* 留言搜尋 + 排序 */}
+          {/* comment search bar */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 26 }}>
             <input
               type="text"
@@ -272,7 +269,7 @@ function PostDetail() {
             <SortDropdown value={sort} onChange={setSort} />
           </div>
 
-          {/* 留言列表 */}
+          {/* Comment list */}
           <div>
             {comments
               .filter((c) => c.text.toLowerCase().includes(searchTerm.toLowerCase()))

@@ -1,7 +1,4 @@
-// 展示用假資料 —— 當側欄點的 Thicket 名字（Thicket_1~5 等）在資料庫裡還不存在時，
-// ThicketBoard / PostDetail / CreatePost 會 fallback 用這裡的假資料，
-// 讓你可以順暢測試發文、留言、回覆的 UI 流程，而不會被「找不到 Thicket」的錯誤卡住。
-// 等你真的透過 Create a Thicket 建立了一個同名討論版，就會自動改用真實 API 資料。
+//For demo data use
 
 export const DEMO_BOARD_DESCRIPTION =
   'This discussion board is a place for students to share ideas, ask questions, and discuss topics related to the course. We can share our opinions, learn from each other, and help each other understand the course content better.';
@@ -25,7 +22,6 @@ For example, using diagrams such as UML or SysML can help us clearly understand 
   }
 ];
 
-// 巢狀留言假資料（後端目前沒有 Comment model，這區塊純 UI 展示）
 export const mockComments = [
   {
     id: 'c1',

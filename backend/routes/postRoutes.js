@@ -1,3 +1,5 @@
+
+//Post Route setting 
 const express = require('express');
 const router = express.Router();
 const { createPost, getPosts, updatePost, deletePost } = require('../controllers/postController');

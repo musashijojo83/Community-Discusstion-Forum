@@ -1,3 +1,5 @@
+
+//Board Route setting
 const express = require('express');
 const router = express.Router();
 const { createBoard, getBoards } = require('../controllers/boardController');

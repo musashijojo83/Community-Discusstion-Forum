@@ -1,6 +1,6 @@
 const User = require('../models/User');
 
-// 更新目前登入使用者的頭像（存 DiceBear 產生的 SVG 網址）
+// Update user's Avatar charactor
 const updateAvatar = async (req, res) => {
   const { avatar } = req.body;
 

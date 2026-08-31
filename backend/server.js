@@ -1,4 +1,5 @@
 
+const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -17,10 +18,14 @@ app.use('/api/auth', authRoutes);
 app.use('/api/boards', boardRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/reports', reportRoutes);
+app.use(express.static(path.join(__dirname, '../frontend/build')));
 
-app.get('/', (req, res) => {
-  res.send('Discussion Board API is running');
-});
+
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+})
+
 
 const PORT = process.env.PORT || 5001;
 

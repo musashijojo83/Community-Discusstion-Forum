@@ -74,9 +74,11 @@ function PostDetail() {
   const [reportPostId, setReportPostId] = useState(null); // 目前要回報的 post id
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [comments, setComments] = useState(mockComments);
   const displayName = thicketName || 'Thicket_name';
 
   useEffect(() => {
+    setComments(mockComments);
     const load = async () => {
       setLoading(true);
       try {
@@ -108,7 +110,17 @@ function PostDetail() {
   }, [postId, location.state]);
 
   const handleSubmitComment = () => {
-    // TODO: 串接留言送出 API（目前後端沒有 Comment model / API，這區塊仍是純前端假資料）
+    // TODO: 後端目前沒有 Comment model / API，這裡先把留言加進前端畫面上的列表，讓送出後看得到真的效果
+    if (!replyText.trim()) return;
+    const newComment = {
+      id: `local-${Date.now()}`,
+      text: replyText.trim(),
+      time: 'Just now',
+      commentCount: 0,
+      replies: [],
+      moreReplies: 0
+    };
+    setComments((prev) => [newComment, ...prev]);
     setReplyText('');
     setReplyOpen(false);
   };
@@ -186,7 +198,7 @@ function PostDetail() {
 
                   <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 14 }}>
                     <button style={{ ...pillButtonStyle, display: 'flex', alignItems: 'center', gap: 6 }}>
-                      💬 {mockComments.length}
+                      💬 {comments.length}
                     </button>
                     <button style={pillButtonStyle}>Share</button>
                   </div>
@@ -262,7 +274,7 @@ function PostDetail() {
 
           {/* 留言列表 */}
           <div>
-            {mockComments
+            {comments
               .filter((c) => c.text.toLowerCase().includes(searchTerm.toLowerCase()))
               .map((c) => (
                 <CommentItem key={c.id} comment={c} onReport={handleReport} />

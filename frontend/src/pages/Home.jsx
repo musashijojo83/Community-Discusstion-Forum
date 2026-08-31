@@ -15,6 +15,7 @@ import monster8 from '../pic/home-monster8.png';
 import monster9 from '../pic/home-monster9.png';
 import memberMonster from '../pic/member-monster.png';
 import approvedBadge from '../pic/approved_1.png';
+import bushImg from '../pic/bush.png';
 
 const MONSTERS = [monster1, monster2, monster3, monster4, monster5, monster6, monster7, monster8, monster9];
 
@@ -41,27 +42,6 @@ const recommendedPosts = Array.from({ length: 6 }).map((_, i) => ({
   time: '2mo ago',
   monster: MONSTERS[(i + 3) % MONSTERS.length]
 }));
-
-// ---- 小草叢裝飾（純 CSS 圖形，不需額外圖檔）----
-function GrassTuft({ style }) {
-  return (
-    <div style={{ position: 'absolute', bottom: 0, display: 'flex', gap: 2, ...style }}>
-      {[0, 1, 2].map((i) => (
-        <div
-          key={i}
-          style={{
-            width: 0,
-            height: 0,
-            borderLeft: '6px solid transparent',
-            borderRight: '6px solid transparent',
-            borderBottom: `${18 + (i % 2) * 8}px solid #5FA83C`,
-            transform: i === 1 ? 'translateY(-4px)' : 'none'
-          }}
-        />
-      ))}
-    </div>
-  );
-}
 
 // ---- Post Card ----
 function PostCard({ post, joined, onJoin }) {
@@ -99,16 +79,35 @@ function PostCard({ post, joined, onJoin }) {
       </div>
 
       {/* 內容區：怪獸 + 草叢 + 地板 */}
-      <div style={{ position: 'relative', height: 130, padding: '16px 0 0 16px' }}>
-        <div style={{ position: 'relative', width: 60, height: 60 }}>
-          <img
-            src={post.monster}
-            alt={post.name}
-            style={{ width: 60, height: 60, borderRadius: 10, position: 'relative', zIndex: 1 }}
-            onError={(e) => { e.currentTarget.style.outline = '2px dashed red'; }}
-          />
-          <GrassTuft style={{ left: -6, bottom: -6, zIndex: 2 }} />
-        </div>
+      <div style={{ position: 'relative', height: 130 }}>
+        <img
+          src={post.monster}
+          alt={post.name}
+          style={{
+            position: 'absolute',
+            left: 16,
+            bottom: 34,
+            width: 60,
+            height: 60,
+            borderRadius: 10,
+            zIndex: 1
+          }}
+          onError={(e) => { e.currentTarget.style.outline = '2px dashed red'; }}
+        />
+
+        {/* 草叢 —— 蓋住怪獸下半部，最底部貼齊下方地板的頂端 */}
+        <img
+          src={bushImg}
+          alt=""
+          style={{
+            position: 'absolute',
+            left: 6,
+            bottom: 20,
+            width: 78,
+            zIndex: 2,
+            pointerEvents: 'none'
+          }}
+        />
 
         {/* 地板 */}
         <div style={{

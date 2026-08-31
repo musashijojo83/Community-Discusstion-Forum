@@ -95,8 +95,8 @@ function ReportQueue() {
           style={{ width: 340, padding: '10px 16px', borderRadius: 20, border: 'none', backgroundColor: '#F1F1E8' }}
         />
         <div style={{ position: 'relative' }}>
-          <img src={memberMonster} alt="me" style={{ width: 40, height: 40, borderRadius: 10 }}
-            onError={(e) => { e.currentTarget.style.outline = '2px dashed red'; }} />
+          <img src={user?.avatar || memberMonster} alt="me" style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: theme.panelBg }}
+            onError={(e) => { e.currentTarget.src = memberMonster; }} />
           <img src={approvedBadge} alt="approved" style={{ width: 16, height: 16, position: 'absolute', top: -5, right: -5 }}
             onError={(e) => { e.currentTarget.style.display = 'none'; }} />
         </div>

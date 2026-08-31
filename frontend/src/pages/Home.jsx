@@ -314,11 +314,11 @@ function Home() {
           <div ref={menuRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ position: 'relative' }}>
               <img
-                src={memberMonster}
+                src={storedUser?.avatar || memberMonster}
                 alt="me"
                 onClick={() => setMenuOpen((v) => !v)}
-                style={{ width: 44, height: 44, borderRadius: 10, cursor: 'pointer' }}
-                onError={(e) => { e.currentTarget.style.outline = '2px dashed red'; }}
+                style={{ width: 44, height: 44, borderRadius: 10, cursor: 'pointer', backgroundColor: theme.panelBg }}
+                onError={(e) => { e.currentTarget.src = memberMonster; }}
               />
               <img
                 src={approvedBadge}
@@ -342,7 +342,7 @@ function Home() {
               }}>
                 {[
                   { label: 'View Profile', action: () => {} },
-                  { label: 'Edit Avatar', action: () => {} },
+                  { label: 'Edit Avatar', action: () => navigate('/edit-avatar') },
                   { label: 'Log Out', action: handleLogout },
                   { label: 'Settings', action: () => {} }
                 ].map((item) => (

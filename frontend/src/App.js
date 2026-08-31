@@ -7,6 +7,7 @@ import ReportQueue from './pages/ReportQueue';
 import ThicketBoard from './pages/ThicketBoard';
 import PostDetail from './pages/PostDetail';
 import CreatePost from './pages/CreatePost';
+import EditAvatar from './pages/EditAvatar';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/thickets/:thicketName" element={<ThicketBoard />} />
         <Route path="/thickets/:thicketName/new-post" element={<CreatePost />} />
         <Route path="/thickets/:thicketName/posts/:postId" element={<PostDetail />} />
+        <Route path="/edit-avatar" element={<EditAvatar />} />
       </Routes>
     </BrowserRouter>
   );

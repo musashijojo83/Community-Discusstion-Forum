@@ -123,6 +123,9 @@ const pillButtonStyle = {
 function ThicketBoard() {
   const { thicketName } = useParams();
   const navigate = useNavigate();
+  const storedUser = (() => {
+    try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
+  })();
   const [joined, setJoined] = useState(false);
   const [sort, setSort] = useState('New');
   const [reportPostId, setReportPostId] = useState(null); // 目前要回報的 post id，null 代表彈窗關閉
@@ -182,8 +185,8 @@ function ThicketBoard() {
         />
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{ position: 'relative' }}>
-            <img src={memberMonster} alt="me" style={{ width: 40, height: 40, borderRadius: 10 }}
-              onError={(e) => { e.currentTarget.style.outline = '2px dashed red'; }} />
+            <img src={storedUser?.avatar || memberMonster} alt="me" style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: theme.panelBg }}
+              onError={(e) => { e.currentTarget.src = memberMonster; }} />
             <img src={approvedBadge} alt="approved" style={{ width: 16, height: 16, position: 'absolute', top: -5, right: -5 }}
               onError={(e) => { e.currentTarget.style.display = 'none'; }} />
           </div>

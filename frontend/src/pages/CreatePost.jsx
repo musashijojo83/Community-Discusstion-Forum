@@ -95,6 +95,12 @@ function CreatePost() {
         width: 560, maxWidth: '100%', backgroundColor: '#fff',
         borderRadius: 16, padding: 32, boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
       }}>
+        <div
+          onClick={() => navigate('/')}
+          style={{ fontSize: 15, fontWeight: 800, color: theme.linkPurple, cursor: 'pointer', marginBottom: 14 }}
+        >
+          ← Rustle Rustle.
+        </div>
         <h2 style={{ marginTop: 0 }}>Make a Rustle</h2>
         <p style={{ color: '#666', fontSize: 13, marginTop: -8, marginBottom: 20 }}>
           Posting in <strong>{thicketName}</strong>

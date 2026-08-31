@@ -170,7 +170,12 @@ function ThicketBoard() {
         backgroundColor: theme.panelBg, padding: '16px 30px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between'
       }}>
-        <div style={{ fontSize: 22, fontWeight: 800 }}>Rustle Rustle.</div>
+        <div
+          onClick={() => navigate('/')}
+          style={{ fontSize: 22, fontWeight: 800, cursor: 'pointer' }}
+        >
+          Rustle Rustle.
+        </div>
         <input
           type="text" placeholder="Search"
           style={{ width: 340, padding: '10px 16px', borderRadius: 20, border: 'none', backgroundColor: '#F1F1E8' }}

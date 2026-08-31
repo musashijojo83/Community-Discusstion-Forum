@@ -61,6 +61,12 @@ function CreateBoard() {
           padding: 32,
           boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
         }}>
+          <div
+            onClick={() => navigate('/')}
+            style={{ fontSize: 15, fontWeight: 800, color: theme.linkPurple, cursor: 'pointer', marginBottom: 14 }}
+          >
+            ← Rustle Rustle.
+          </div>
           <h2 style={{ marginTop: 0, marginBottom: 22 }}>Create a Thicket</h2>
 
           <form onSubmit={handleSubmit}>

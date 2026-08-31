@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from '../axiosConfig';
 import { theme } from '../theme';
 import memberMonster from '../pic/member-monster.png';
@@ -24,6 +24,7 @@ const sidebarButtonStyle = {
 const REASON_COLORS = { Spam: '#E24C4C', Harassment: '#B968C7', Other: '#5FA83C' };
 
 function ReportQueue() {
+  const navigate = useNavigate();
   const [reports, setReports] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -83,7 +84,12 @@ function ReportQueue() {
         backgroundColor: theme.panelBg, padding: '16px 30px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between'
       }}>
-        <div style={{ fontSize: 22, fontWeight: 800 }}>Rustle Rustle.</div>
+        <div
+          onClick={() => navigate('/')}
+          style={{ fontSize: 22, fontWeight: 800, cursor: 'pointer' }}
+        >
+          Rustle Rustle.
+        </div>
         <input
           type="text" placeholder="Search"
           style={{ width: 340, padding: '10px 16px', borderRadius: 20, border: 'none', backgroundColor: '#F1F1E8' }}

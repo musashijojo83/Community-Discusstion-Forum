@@ -18,14 +18,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/boards', boardRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/reports', reportRoutes);
+
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
-
-
-app.get('*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
-})
-
+});
 
 const PORT = process.env.PORT || 5001;
 

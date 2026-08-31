@@ -18,7 +18,12 @@ function Login() {
       const res = await axios.post('/auth/login', { email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
-      navigate('/');
+      // 還沒選過怪獸頭像（avatar 是空的）代表這是第一次登入，先帶去選怪獸
+      if (!res.data.user.avatar) {
+        navigate('/edit-avatar');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Incorrect email or password.');
     }

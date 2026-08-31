@@ -4,7 +4,9 @@ import Register from './pages/Register';
 import Home from './pages/Home';
 import CreateBoard from './pages/CreateBoard';
 import ReportQueue from './pages/ReportQueue';
-
+import ThicketBoard from './pages/ThicketBoard';
+import PostDetail from './pages/PostDetail';
+import CreatePost from './pages/CreatePost';
 
 function App() {
   return (
@@ -15,6 +17,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/create-board" element={<CreateBoard />} />
         <Route path="/reports" element={<ReportQueue />} />
+        <Route path="/thickets/:thicketName" element={<ThicketBoard />} />
+        <Route path="/thickets/:thicketName/new-post" element={<CreatePost />} />
+        <Route path="/thickets/:thicketName/posts/:postId" element={<PostDetail />} />
       </Routes>
     </BrowserRouter>
   );

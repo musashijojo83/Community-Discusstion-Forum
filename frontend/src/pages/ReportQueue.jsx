@@ -1,64 +1,185 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../axiosConfig';
+import { theme } from '../theme';
+import memberMonster from '../pic/member-monster.png';
+import approvedBadge from '../pic/approved_1.png';
+import { SortDropdown, THICKET_COLORS, mockJoinedThickets } from './ThicketBoard';
+import DeleteConfirmModal from './DeleteConfirmModal';
+
+const sidebarButtonStyle = {
+  width: '100%',
+  textAlign: 'left',
+  padding: '10px 14px',
+  borderRadius: 10,
+  border: 'none',
+  backgroundColor: '#fff',
+  fontWeight: 700,
+  fontSize: 14,
+  cursor: 'pointer',
+  marginBottom: 10,
+  display: 'block'
+};
+
+const REASON_COLORS = { Spam: '#E24C4C', Harassment: '#B968C7', Other: '#5FA83C' };
 
 function ReportQueue() {
   const [reports, setReports] = useState([]);
   const [error, setError] = useState('');
-  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const [loading, setLoading] = useState(true);
+  const [sort, setSort] = useState('New');
+  const [pendingDelete, setPendingDelete] = useState(null); // { postId, reportId } | null
+
+  const user = (() => {
+    try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
+  })();
+  const isAuthorized = !!user && (user.role === 'moderator' || user.role === 'admin');
 
   useEffect(() => {
-    fetchReports();
+    if (isAuthorized) fetchReports();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchReports = async () => {
+    setLoading(true);
     try {
       const res = await axios.get('/reports');
-      setReports(res.data);
+      // post 已被刪掉的話 populate 會回傳 null，這種資料就不用再顯示在待審清單
+      setReports(res.data.filter((r) => r.post));
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load reports');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDelete = async (postId, reportId) => {
-    if (!window.confirm('Are you sure you want to delete this Rustle/Thicket post?')) return;
+  const handleConfirmDelete = async () => {
     try {
-      await axios.delete(`/posts/${postId}`);
-      alert('Post deleted.');
-      fetchReports();
+      await axios.delete(`/posts/${pendingDelete.postId}`);
+      setReports((prev) => prev.filter((r) => r._id !== pendingDelete.reportId));
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete post');
+      setError(err.response?.data?.message || 'Failed to delete post');
+      throw err; // 讓 DeleteConfirmModal 不要顯示「已刪除」畫面
     }
   };
 
-  if (!user || (user.role !== 'moderator' && user.role !== 'admin')) {
+  // ---- 沒有權限：擋下畫面 ----
+  if (!isAuthorized) {
     return (
-      <div style={{ textAlign: 'center', marginTop: 80, fontFamily: 'sans-serif' }}>
-        <p>You do not have permission to view this page.</p>
-        <Link to="/">Back to home</Link>
+      <div style={{
+        minHeight: '100vh', backgroundColor: theme.formBg, fontFamily: 'sans-serif',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+      }}>
+        <p style={{ fontSize: 16, marginBottom: 12 }}>You do not have permission to view this page.</p>
+        <Link to="/" style={{ color: theme.linkPurple, fontWeight: 700 }}>Back to home</Link>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: 700, margin: '40px auto', fontFamily: 'sans-serif' }}>
-      <h2>Moderator Report Queue</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {reports.length === 0 ? (
-        <p>No pending reports.</p>
-      ) : (
-        reports.map((r) => (
-          <div key={r._id} style={{ border: '1px solid #ddd', padding: 12, marginBottom: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <strong>{r.post?.title || '(post removed)'}</strong>
-              <br />
-              <small>Reason: {r.reason} · Reported by {r.reportedBy?.nickname}</small>
+    <div style={{ minHeight: '100vh', backgroundColor: theme.formBg, fontFamily: 'sans-serif' }}>
+      {/* Nav bar */}
+      <div style={{
+        backgroundColor: theme.panelBg, padding: '16px 30px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+      }}>
+        <div style={{ fontSize: 22, fontWeight: 800 }}>Rustle Rustle.</div>
+        <input
+          type="text" placeholder="Search"
+          style={{ width: 340, padding: '10px 16px', borderRadius: 20, border: 'none', backgroundColor: '#F1F1E8' }}
+        />
+        <div style={{ position: 'relative' }}>
+          <img src={memberMonster} alt="me" style={{ width: 40, height: 40, borderRadius: 10 }}
+            onError={(e) => { e.currentTarget.style.outline = '2px dashed red'; }} />
+          <img src={approvedBadge} alt="approved" style={{ width: 16, height: 16, position: 'absolute', top: -5, right: -5 }}
+            onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+        </div>
+      </div>
+
+      <div style={{ display: 'flex' }}>
+        {/* 左側功能列 */}
+        <div style={{ width: 240, backgroundColor: theme.panelBg, padding: 20, minHeight: 'calc(100vh - 76px)', boxSizing: 'border-box' }}>
+          <button style={sidebarButtonStyle}>Notifications</button>
+          <button style={sidebarButtonStyle}>Create a Thicket +</button>
+          <button style={sidebarButtonStyle}>Big Thicket</button>
+          <button style={sidebarButtonStyle}>Explore</button>
+          <button style={{ ...sidebarButtonStyle, backgroundColor: '#c9ceac' }}>Moderator model</button>
+
+          <p style={{ fontWeight: 700, fontSize: 13, margin: '20px 0 10px' }}>Thicket you in &gt;</p>
+          {mockJoinedThickets.map((name, i) => (
+            <div key={name} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 4px', fontSize: 13, fontWeight: 600 }}>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: THICKET_COLORS[i % THICKET_COLORS.length] }} />
+              {name}
             </div>
-            <button onClick={() => handleDelete(r.post?._id, r._id)}>Delete</button>
+          ))}
+        </div>
+
+        {/* 主內容：Report Queue */}
+        <div style={{ flex: 1, padding: '30px 36px' }}>
+          <h2 style={{ marginTop: 0, marginBottom: 6 }}>Moderator model - Report Context</h2>
+          <div style={{ marginBottom: 18 }}>
+            <SortDropdown value={sort} onChange={setSort} />
           </div>
-        ))
+
+          {error && <p style={{ color: theme.errorRed }}>{error}</p>}
+          {loading && <p>Loading...</p>}
+          {!loading && reports.length === 0 && !error && (
+            <p style={{ color: '#666' }}>No pending reports right now.</p>
+          )}
+
+          {reports.map((r) => (
+            <div key={r._id} style={{
+              backgroundColor: '#C9CE84',
+              borderRadius: 16,
+              padding: '14px 18px',
+              marginBottom: 16,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16
+            }}>
+              <div style={{ flexShrink: 0 }}>
+                <div style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: REASON_COLORS[r.reason] || '#999' }} />
+                <span style={{ fontSize: 10, color: '#555' }}>
+                  {new Date(r.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+
+              <div style={{
+                flex: 1, fontWeight: 700, fontSize: 15,
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
+              }}>
+                {r.post?.title || '(post removed)'}
+              </div>
+
+              <div style={{
+                padding: '10px 26px', borderRadius: 10, backgroundColor: '#fff',
+                fontWeight: 700, fontSize: 15, flexShrink: 0
+              }}>
+                {r.reason}
+              </div>
+
+              <button
+                onClick={() => setPendingDelete({ postId: r.post?._id, reportId: r._id })}
+                disabled={!r.post}
+                style={{
+                  padding: '10px 22px', borderRadius: 10, border: 'none',
+                  backgroundColor: '#ddd', fontWeight: 700, fontSize: 14,
+                  cursor: r.post ? 'pointer' : 'not-allowed', flexShrink: 0
+                }}
+              >
+                delete
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {pendingDelete && (
+        <DeleteConfirmModal
+          onConfirm={handleConfirmDelete}
+          onClose={() => setPendingDelete(null)}
+        />
       )}
-      <p><Link to="/">Back to home</Link></p>
     </div>
   );
 }

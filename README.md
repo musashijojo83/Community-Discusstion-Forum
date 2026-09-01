@@ -6,7 +6,8 @@ community groups to share knowledge, ask sensitive questions without using
 their real name, and self-organise into topic-based "Thickets" (discussion
 boards).
 
-**Live deployment:** http://52.63.96.167:5001
+**Live deployment:** http://3.107.183.215:5001
+(If the ip has changed please let me know)
 
 ## Architecture Summary
 
